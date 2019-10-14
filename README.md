@@ -13,7 +13,11 @@ All boundary conditions, utilities, and solvers are compiled using a special Doc
 - OpenFOAM-v1906
 - [PyTorch](https://pytorch.org/) 1.2.0
 
-The Dockerfile and additional information on the build process can be found [here](https://github.com/AndreWeiner/of_pytorch_docker).
+The Dockerfile and additional information on the build process can be found [here](https://github.com/AndreWeiner/of_pytorch_docker). The docker image is hosted on [Dockerhub](https://cloud.docker.com/u/andreweiner/repository/docker/andreweiner/of_pytorch). To pull the image containing OpenFOAM-v1906 and PyTorch 1.2, run
+
+```
+docker pull andreweiner/of_pytorch:of1906-py1.2-cpu
+```
 
 ### Docker
 
@@ -26,5 +30,9 @@ Any installed version of [Docker](https://docs.docker.com/install/) larger than 
 ## Compiling solvers etc.
 
 ## Running test cases
+
+```
+source /opt/OpenFOAM/OpenFOAM-v1906/etc/bashrc
+```
 
 ## How to reference
