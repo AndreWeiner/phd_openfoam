@@ -1,0 +1,35 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/RunFunctions    # Tutorial run functions
+
+stlFileBaseName="constant/triSurface/bhaga_02_l16"
+./Allclean
+
+# Create a 2D wedge mesh of an axis-symmetric bubble using snappyHexMesh
+## Create background mesh with blockMesh
+runApplication blockMesh
+## Prepare STL file
+runApplication surfaceTransformPoints -translate '(0 0 -0.5)' $stlFileBaseName.stl ${stlFileBaseName}_right.stl
+mv log.surfaceTransformPoints log.surfaceTransformPoints.translate
+runApplication surfaceTransformPoints -rotate-angle '((0 1 0) 180)' ${stlFileBaseName}_right.stl ${stlFileBaseName}_left.stl
+mv log.surfaceTransformPoints log.surfaceTransformPoints.rotate
+runApplication surfaceAdd -mergeRegions ${stlFileBaseName}_right.stl ${stlFileBaseName}_left.stl ${stlFileBaseName}_full.stl
+rm ${stlFileBaseName}_right.stl ${stlFileBaseName}_left.stl 
+runApplication surfaceTransformPoints -translate '(0 0 0.25)'  ${stlFileBaseName}_full.stl ${stlFileBaseName}_full.stl
+
+## Create 3D mesh with snappyHexMesh
+runApplication snappyHexMesh -overwrite
+## Extrude upper patch to create a wedge
+runApplication topoSet -dict system/topoSetDict.extrude
+mv log.topoSet log.topoSet.extrude
+runApplication createPatch -overwrite -dict system/createPatchDict.extrude
+mv log.createPatch log.createPatch.extrude
+runApplication extrudeMesh
+runApplication collapseEdges -overwrite -collapseFaces
+runApplication createPatch -overwrite -dict system/createPatchDict.rename
+mv log.createPatch log.createPatch.rename
+## Check mesh quality
+runApplication checkMesh -constant
+touch post.foam
+
+#------------------------------------------------------------------------------
