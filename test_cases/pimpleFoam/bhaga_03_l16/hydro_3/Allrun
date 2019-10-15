@@ -1,0 +1,15 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/RunFunctions    # run functions
+
+./Allclean
+# create symbolic link to PyTorch model
+ln -sf /home/test_cases/pyTorchModels/bhaga_03_l16_u_tau_ts.pt pyTorchModel.pt
+# copy mesh
+cp -r ../refinement_3/constant/polyMesh/ constant/
+# run pimpleFoam
+runApplication $(getApplication)
+# post processing
+touch post.foam
+
+#------------------------------------------------------------------------------

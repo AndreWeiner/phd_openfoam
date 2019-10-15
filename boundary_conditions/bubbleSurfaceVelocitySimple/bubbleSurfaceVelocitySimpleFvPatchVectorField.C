@@ -133,9 +133,8 @@ void Foam::bubbleSurfaceVelocitySimpleFvPatchVectorField::updateCoeffs()
 
     // compute polar angle for each patch face
     const vectorField Cf(patch().Cf() - origin_);
-    torch::Tensor phiTensor = torch::ones({Cf.size(), 1});
+    torch::Tensor phiTensor = torch::ones({Cf.size(), 1}, torch::kFloat64);
 
-    // scalar pi = constant::mathematical::pi;
     forAll(Cf, faceI)
     {
         scalar r = sqrt(Cf[faceI] & Cf[faceI]);
@@ -145,7 +144,7 @@ void Foam::bubbleSurfaceVelocitySimpleFvPatchVectorField::updateCoeffs()
     // run forward pass to compute tangential velocity
     std::vector<torch::jit::IValue> modelFeatures{phiTensor};
     torch::Tensor uTensor = pyTorch_model_.forward(modelFeatures).toTensor();
-    auto uAccessor = uTensor.accessor<float,1>();
+    auto uAccessor = uTensor.accessor<double,1>();
 
     vectorField surfaceVelocity(Cf.size(), Zero);
     forAll(surfaceVelocity, faceI)

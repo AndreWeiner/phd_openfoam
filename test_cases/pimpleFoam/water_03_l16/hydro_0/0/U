@@ -1,0 +1,46 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     3.1                                |
+|   \\  /    A nd           | Web:         http://www.extend-project.de       |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 -3.07036012 0);
+
+boundaryField
+{
+    outerDomain
+    {
+        type            inletOutlet;
+        inletValue      $internalField;
+        value           $internalField;
+    }
+    bubble
+    {
+        type            bubbleSurfaceVelocitySimple;
+        origin          (0 0 0);
+        axis            (0 1 0);
+        normal          (0 0 -1);
+        model           "pyTorchModel.pt";
+    }
+    "wedge_.*"
+    {
+        type            wedge;
+    }
+
+}
+
+
+// ************************************************************************* //
