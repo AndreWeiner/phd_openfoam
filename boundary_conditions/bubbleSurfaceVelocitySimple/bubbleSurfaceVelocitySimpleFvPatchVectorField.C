@@ -162,6 +162,7 @@ void Foam::bubbleSurfaceVelocitySimpleFvPatchVectorField::write(Ostream& os) con
     fvPatchVectorField::write(os);
     os.writeEntry("origin", origin_);
     os.writeEntry("axis", axis_);
+    os.writeEntry("normal", normal_);
     os.writeEntry("model", model_name_);
     writeEntry("value", os);
 }

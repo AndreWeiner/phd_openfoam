@@ -142,7 +142,7 @@ void Foam::bubbleSurfaceVelocityComplexFvPatchVectorField::updateCoeffs()
 
     // compute polar angle for each patch face
     const vectorField Cf(patch().Cf() - origin_);
-    scalar minC = min(Cf & axis_);
+    scalar minC = gMin(Cf & axis_);
     const vectorField Cf_min(Cf + mag(minC) * axis_);
     scalarField rf(Cf_min.size(), Zero);
 
@@ -186,6 +186,7 @@ void Foam::bubbleSurfaceVelocityComplexFvPatchVectorField::write(Ostream& os) co
     fvPatchVectorField::write(os);
     os.writeEntry("origin", origin_);
     os.writeEntry("axis", axis_);
+    os.writeEntry("normal", normal_);
     os.writeEntry("velocity_model", model_name_velocity_);
     os.writeEntry("radius_model", model_name_radius_);
     writeEntry("value", os);

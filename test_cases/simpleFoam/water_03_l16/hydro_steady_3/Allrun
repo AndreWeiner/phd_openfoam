@@ -1,0 +1,19 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/RunFunctions    # run functions
+
+./Allclean
+# create symbolic link to PyTorch model
+ln -sf /home/test_cases/pyTorchModels/water_03_l16_u_tau_ts.pt pyTorchModel.pt
+# copy mesh
+cp -r ../refinement_3/constant/polyMesh/ constant/
+# rename zero folder
+cp -r 0.org 0
+# map fields from previous refinement level
+runApplication mapFields -consistent -sourceTime latestTime ../hydro_steady_2/
+# run simpleFoam
+runApplication $(getApplication)
+# post processing
+touch post.foam
+
+#------------------------------------------------------------------------------

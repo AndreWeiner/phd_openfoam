@@ -1,7 +1,7 @@
 boundary_conditions/pyTorchCppTest/build
-boundary_conditions/bubbleSurfaceVelocitySimple/lnInclude
-boundary_conditions/bubbleSurfaceVelocitySimple/Make/linux64GccDPInt32Opt
-boundary_conditions/bubbleSurfaceVelocityComplex/lnInclude
-boundary_conditions/bubbleSurfaceVelocityComplex/Make/linux64GccDPInt32Opt
+*lnInclude*
+*linux64GccDPInt32Opt*
+*linux64GccDPOpt*
 test_cases/run
+bin
 *.so

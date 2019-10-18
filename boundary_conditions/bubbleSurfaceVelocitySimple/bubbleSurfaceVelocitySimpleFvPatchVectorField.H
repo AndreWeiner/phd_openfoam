@@ -52,7 +52,7 @@ Usage
         type            bubbleSurfaceVelocitySimple;
         origin          (0 0 0);
         axis            (0 1 0);
-        normal          (0 0 1);
+        normal          (0 0 -1);
         model_name      "bhaga_02_l16_u_tau_ts.pt";
     }
     \endverbatim

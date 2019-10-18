@@ -1,0 +1,36 @@
+EXE_INC = \
+    -I$(LIB_SRC)/TurbulenceModels/turbulenceModels/lnInclude \
+    -I$(LIB_SRC)/TurbulenceModels/incompressible/lnInclude \
+    -I$(LIB_SRC)/transportModels \
+    -I$(LIB_SRC)/transportModels/incompressible/singlePhaseTransportModel \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIBTORCH_PATH)/include \
+    -I$(LIBTORCH_PATH)/include/torch/csrc/api/include
+
+EXE_LIBS = \
+    -lturbulenceModels \
+    -lincompressibleTurbulenceModels \
+    -lincompressibleTransportModels \
+    -lfiniteVolume \
+    -lmeshTools \
+    -lfvOptions \
+    -lsampling \
+    -rdynamic /home/local/CSI/tp83ytyb/anaconda3/lib/python3.6/site-packages/torch/lib/libtorch.so \
+    /usr/local/cuda-9.2/lib64/stubs/libcuda.so \
+    /usr/local/cuda-9.2/lib64/libnvrtc.so \
+    /usr/local/cuda/lib64/libnvToolsExt.so \
+    /usr/local/cuda/lib64/libcudart_static.a \
+    -lpthread -ldl -lrt \
+    -Wl,--no-as-needed,/home/local/CSI/tp83ytyb/anaconda3/lib/python3.6/site-packages/torch/lib/libcaffe2.so \
+    -Wl,--as-needed \
+    -Wl,--no-as-needed,/home/local/CSI/tp83ytyb/anaconda3/lib/python3.6/site-packages/torch/lib/libcaffe2_gpu.so \
+    -Wl,--as-needed /home/local/CSI/tp83ytyb/anaconda3/lib/python3.6/site-packages/torch/lib/libcaffe2.so \
+    /home/local/CSI/tp83ytyb/anaconda3/lib/python3.6/site-packages/torch/lib/libc10.so /usr/local/cuda/lib64/libcufft.so \
+    /usr/local/cuda/lib64/libcurand.so \
+    /usr/local/cuda/lib64/libculibos.a \
+    /usr/local/cuda/lib64/libcublas.so \
+    /usr/local/cuda/lib64/libcudart_static.a \
+    -lpthread -ldl -lrt \
+    -Wl,-rpath,/home/local/CSI/tp83ytyb/anaconda3/lib/python3.6/site-packages/torch/lib:/usr/local/cuda-9.2/lib64/stubs:/usr/local/cuda-9.2/lib64:/usr/local/cuda/lib64
