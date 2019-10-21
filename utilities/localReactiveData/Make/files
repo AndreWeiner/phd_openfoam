@@ -1,3 +1,2 @@
 localReactiveData.C
-
-EXE = $(FOAM_USER_APPBIN)/localReactiveData
+EXE = /home/bin/localReactiveData

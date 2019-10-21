@@ -25,7 +25,7 @@ Application
     localeSh
 
 Description
-    Compute the locale sherwood number
+    Compute species gradient and value at the interface.
 
 \*---------------------------------------------------------------------------*/
 
@@ -36,248 +36,95 @@ Description
 int main(int argc, char *argv[])
 {
 
-    timeSelector::addOptions(true, false);
-    argList args(argc, argv);
+    #include "setRootCase.H"
     #include "createTime.H"
-    instantList timeDirs = timeSelector::select0(runTime, args);
     #include "createMesh.H"
-    #include "createFields.H"
-
-    label patchID = mesh.boundaryMesh().findPatchID(interfacePatch);
-
-    vectorField faceCenters = mesh.Cf().boundaryField()[patchID];
-    scalarField polarAngles(faceCenters.size());
-    scalarField polarRadius(faceCenters.size());
-    scalarField radii(faceCenters.size());
-    scalarField cellFaces = mesh.magSf().boundaryField()[patchID];
-    vector v1 = vector(0, 0, 0);
-    vector v2 = vector(0, 0, 0);
-    vector v3 = vector(0, 0, 0);
-    if(centerAxis.x()>0)
-    {
-        v1 = vector(1, 0, 0);
-        v2 = vector(0, 1, 0);
-        v3 = vector(0, 0, 1);
-    }
-    else if(centerAxis.y()>0)
-    {
-        v1 = vector(0, 1, 0);
-        v2 = vector(0, 0, 1);
-        v3 = vector(1, 0, 0);
-    }
-    else if(centerAxis.z()>0)
-    {
-        v1 = vector(0, 0, 1);
-        v2 = vector(1, 0, 0);
-        v3 = vector(0, 1, 0);
-    }
+    #include "initReaction.H"
 
 
-    forAll(faceCenters, faceI)
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+    instantList timeDirs = timeSelector::select0(runTime, args);
+    // determine patch ID
+    label surfaceID(-1);
+    forAll (mesh.boundary(), patchI)
     {
-        vector c = faceCenters[faceI] - center;
-        scalar x = c & centerAxis;
-        scalar y = c & v2;
-        scalar z = c & v3;
-        scalar yz = ::sqrt(::pow(y, 2.0) + ::pow(z, 2.0));
-        scalar r = ::mag(c);
-        radii[faceI] = yz;
-        scalar t = ::asin(yz/r);
-        if (x < 0.0)
+        if (mesh.boundary()[patchI].name() == "bubble")
         {
-            t=constant::mathematical::pi-t;
+            surfaceID = patchI;
         }
-        polarAngles[faceI] = t;
-        polarRadius[faceI] = yz*constant::mathematical::pi*2.0;
     }
 
-    int numOfFields = 0;
-    List<word> fieldNames(10);
+    const vectorField Cf(mesh.Cf().boundaryField()[surfaceID]);
+    const vectorField Sf(mesh.Sf().boundaryField()[surfaceID]);
+    scalarField globalGrad(timeDirs.size(), 0.0);
 
-    if (reaction == "noReaction")
+    forAll (timeDirs, timei)
     {
-        numOfFields = 1;
-        fieldNames[0] = "A";
-    }
-    else if(reaction == "decayReaction")
-    {
-        numOfFields = 2;
-        fieldNames[0] = "A";
-        fieldNames[1] = "P";
-    }
-    else if(reaction == "singleReaction")
-    {
-        numOfFields = 3;
-        fieldNames[0] = "A";
-        fieldNames[1] = "B";
-        fieldNames[2] = "P";
-    }
-    else if(reaction == "consecutiveReaction")
-    {
-        numOfFields = 4;
-        fieldNames[0] = "A";
-        fieldNames[1] = "B";
-        fieldNames[2] = "P";
-        fieldNames[3] = "S";
-    }
-    else if(reaction == "competitiveReaction")
-    {
-        numOfFields = 5;
-        fieldNames[0] = "A";
-        fieldNames[1] = "B";
-        fieldNames[2] = "C";
-        fieldNames[3] = "P";
-        fieldNames[4] = "S";
-    }
-    else
-    {
-      Info << "Unknown reaction type " << reaction << endl;
-      return 0;
-    }
+        runTime.setTime(timeDirs[timei], timei);
+        Info<< "Time = " << runTime.timeName() << endl;
 
-    PtrList<volScalarField> fields(numOfFields);
+        #include "createFields.H"
 
-    forAll(fields, i)
-    {
-       fields.set
-       (
-           i,
-           new volScalarField
-           (
-               IOobject
-               (
-                  fieldNames[i],
-                  runTime.timeName(),
-                  mesh,
-                  IOobject::MUST_READ,
-                  IOobject::NO_WRITE
-               ),
-           mesh
-           )
-       );
-    }
+        List<scalarField> interfaceConc(numOfFields);
 
-    List<scalarField> interfaceConc(numOfFields);
-    List<scalar> averageConc(numOfFields);
-
-    forAll(fields, i)
-    {
-       interfaceConc[i] = fields[i].boundaryField()[patchID];
-       averageConc[i] = sum(interfaceConc[i]*cellFaces)/sum(cellFaces);
-    }
-
-    scalarField gradA(fields[0].boundaryField()[patchID].snGrad());
-    scalarField localShA(gradA/interfaceConc[0]*2.0*bR.value());
-    scalar globalShA(sum(cellFaces*localShA)/sum(cellFaces));
-
-    List<scalarField> sectorValues(numOfFields);
-    scalarField sectorAngle(int(sectors.value()), 0.0);
-    scalarField sectorRadius(int(sectors.value()), 0.0);
-    scalarField sectorArea(int(sectors.value()), 0.0);
-    scalarField sectorShA(int(sectors.value()), 0.0);
-    scalarField secStart(int(sectors.value()), 0.0);
-    scalarField secEnd(int(sectors.value()), 0.0);
-
-    forAll(sectorValues, fieldI)
-    {
-      sectorValues[fieldI] = secStart*0.0;
-    }
-
-    forAll(secEnd, secI)
-    {
-      secStart[secI] = constant::mathematical::pi/sectors.value()*(secI);
-      secEnd[secI] = constant::mathematical::pi/sectors.value()*(secI+1);
-    }
-
-    for (int i=0; i < sectors.value(); i++)
-    {
-      forAll(polarAngles, faceI)
-      {
-        if (polarAngles[faceI] >= secStart[i] && polarAngles[faceI] < secEnd[i])
+        forAll (fields, i)
         {
-          forAll(interfaceConc, fieldI)
-          {
-            sectorValues[fieldI][i] += interfaceConc[fieldI][faceI]*cellFaces[faceI];
-          } // loop over all concentrations
-          sectorArea[i] += cellFaces[faceI];
-          sectorAngle[i] += polarAngles[faceI]*cellFaces[faceI];
-          sectorRadius[i] += polarRadius[faceI]*cellFaces[faceI];
-          sectorShA[i] += localShA[faceI]*cellFaces[faceI];
-        } // in sector?
-      } // loop over faces
-      if (sectorArea[i] > 0)
-      {
-        sectorAngle[i] /= sectorArea[i];
-        sectorRadius[i] /= sectorArea[i];
-        sectorShA[i] /= sectorArea[i];
-        forAll(sectorValues, fieldI)
-        {
-          sectorValues[fieldI][i] /= sectorArea[i];
+           interfaceConc[i] = fields[i].boundaryField()[surfaceID];
         }
-      } // normalize with area if at least one cell is in the sector
-    } // loop over sectors
 
-    OFstream outputFile(runTime.path()/runTime.timeName()/"interfaceData.dat");
-    outputFile.precision(12);
+        scalarField gradA(fields[0].boundaryField()[surfaceID].snGrad());
+        globalGrad[timei] = sum(gradA * mag(Sf)) / sum(mag(Sf));
 
-    outputFile  << "# time: " << runTime.timeName() << endl
-                << "# effective area: " << sum(cellFaces) << endl
-                << "# global Sh: " << tab << globalShA << endl;
+        OFstream outputFile(runTime.path()/runTime.timeName()/"interfaceData.csv");
+        outputFile.precision(15);
 
-    if (reaction == "noReaction")
-    {
-        outputFile << "# average c_A: " << averageConc[0] << endl
-                   << "# polar Angle / axis Radius / Sh_A / c_A" << endl;
-    }
-    else if(reaction == "decayReaction")
-    {
-      outputFile << "# average c_A / c_P: "
-                 << averageConc[0] << tab << averageConc[1] << endl
-                 << "# polar Angle / axis Radius / Sh_A / c_A / c_P" << endl;
-    }
-    else if(reaction == "singleReaction")
-    {
-      outputFile << "# average c_A / c_B / c_P: "
-                 << averageConc[0] << tab << averageConc[1] << tab
-                 << averageConc[2] << endl
-                 << "# polar Angle / axis Radius / Sh_A / c_A / c_B / c_P" << endl;
-    }
-    else if(reaction == "consecutiveReaction")
-    {
-      outputFile << "# average c_A / c_B / c_P / c_S: "
-                 << averageConc[0] << tab << averageConc[1] << tab
-                 << averageConc[2] << tab << averageConc[3] << endl
-                 << "# polar Angle / axis Radius / Sh_A / c_A / c_B / c_P / c_S" << endl;
-    }
-    else if(reaction == "competitiveReaction")
-    {
-      outputFile << "# average c_A / c_B / c_C / c_P / c_S: "
-                 << averageConc[0] << tab << averageConc[1] << tab
-                 << averageConc[2] << tab << averageConc[3] << tab
-                 << averageConc[4] << endl
-                 << "# polar Angle / axis Radius / Sh_A / c_A / c_B / c_C / c_P / c_S" << endl;
-    }
+        if (reaction == "noReaction")
+        {
+            outputFile  << "# x, y, A, snGradA";
+        }
+        else if(reaction == "decayReaction")
+        {
+            outputFile  << "# x, y, A, snGradA, c_P";
+        }
+        else if(reaction == "singleReaction")
+        {
+            outputFile  << "# x, y, A, snGradA, c_P, c_B";
+        }
+        else if(reaction == "consecutiveReaction")
+        {
+            outputFile  << "# x, y, A, snGradA, c_P, c_B, c_S";
+        }
 
-    forAll(sectorAngle, angleI)
+        forAll(Cf, faceI)
+        {
+            outputFile << "\n"
+                      << Cf[faceI].x() << ", " << Cf[faceI].y() << ", "
+                      << mag(Sf[faceI]) << ", " << gradA[faceI];
+            forAll (fields, i)
+            {
+                if (i > 0)
+                {
+                    outputFile << ", " << fields[i][faceI];
+                }
+            }
+        }
+    } // end of time loop
+
+    // write global gradient
+    OFstream gradFile(runTime.path()/"gradGlobal.csv");
+    gradFile.precision(15);
+
+    gradFile << "# time, gradA_gl, A_gl";
+
+    forAll (timeDirs, timei)
     {
-      outputFile  << sectorAngle[angleI] << tab << sectorRadius[angleI] << tab
-                  << sectorShA[angleI] << tab;
-      forAll(sectorValues, fieldI)
-      {
-        outputFile << sectorValues[fieldI][angleI] << tab;
-      }
-      outputFile << endl;
+        runTime.setTime(timeDirs[timei], timei);
+        gradFile << "\n"
+                 << runTime.timeName() << ", "
+                 << globalGrad[timei] << ", "
+                 << sum(mag(Sf));
     }
-/*    forAll(faceCenters,faceI)
-    {
-      outputFile  << polarAngles[faceI] << tab << polarRadius[faceI] << tab
-                  << localShA[faceI] << tab;
-      forAll(interfaceConc, i)
-      {
-        outputFile << interfaceConc[i][faceI] << tab;
-      }
-      outputFile << endl;
-    }*/
 
     Info << "End\n" << endl;
 

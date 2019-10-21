@@ -1,0 +1,2 @@
+speciesFoam.C
+EXE = ../../bin/speciesFoam

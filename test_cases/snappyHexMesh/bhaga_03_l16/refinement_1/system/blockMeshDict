@@ -15,10 +15,10 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // varibles to define the background mesh
-outerRad 5.0;
-negOuterRad -5.0;
-blocksX 200;
-blocksY 200;
+outerRad 7.5;
+negOuterRad -7.5;
+blocksX 300;
+blocksY 300;
 thickness #calc "2 * $outerRad / $blocksX";
 
 scale   1;
