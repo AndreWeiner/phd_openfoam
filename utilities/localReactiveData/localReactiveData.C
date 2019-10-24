@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
         {
             outputFile  << "# x, y, A, snGradA, c_P, c_B";
         }
-        else if(reaction == "consecutiveReaction")
+        else if(reaction == "parallelConsecutiveReaction")
         {
             outputFile  << "# x, y, A, snGradA, c_P, c_B, c_S";
         }

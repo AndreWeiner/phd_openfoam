@@ -38,7 +38,7 @@ else if(reaction == "singleReaction")
     fieldNames[1] = "B";
     fieldNames[2] = "P";
 }
-else if(reaction == "consecutiveReaction")
+else if(reaction == "parallelConsecutiveReaction")
 {
     numOfFields = 4;
     fieldNames[0] = "A";
