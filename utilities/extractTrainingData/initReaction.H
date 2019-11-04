@@ -17,28 +17,6 @@ const word reaction
     reactionType.lookup("reactionType")
 );
 
-IOdictionary transportProperties
-(
-    IOobject
-    (
-        "transportProperties",
-        runTime.constant(),
-        mesh,
-        IOobject::MUST_READ_IF_MODIFIED,
-        IOobject::NO_WRITE
-    )
-);
-
-torch::jit::script::Module A_model;
-if (args.found("sgs"))
-{
-    const word A_model_name
-    (
-        transportProperties.lookup("A_model")
-    );
-    A_model = torch::jit::load(A_model_name);
-}
-
 int numOfFields = 0;
 List<word> fieldNames(10);
 

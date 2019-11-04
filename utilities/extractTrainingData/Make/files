@@ -1,0 +1,3 @@
+extractTrainingData.C
+
+EXE = /home/bin/extractTrainingData
