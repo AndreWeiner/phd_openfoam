@@ -93,6 +93,15 @@ cd test_case
 
 Note that there are dependencies between the various test cases. For example, running a species transport simulation with *speciesFoam* requires a mesh and a velocity field. So the order to execute the provided simulation setting would be *meshing*, *flow solution*, *species transport*. Check out the *Allrun* scripts for more information.
 
+The naming convention for the test cases in relation to the geometry files presented before is as follows:
+
+* water-air, d_b=1.0mm: all cases in *water_01_l16*
+* water-air, d_b=1.4mm: all cases in *water_03_l16*
+* water-air, d_b=1.8mm: all cases in *water_05_l16*
+* dimpled ellipsoidal: all cases in *bhaga_02_l16*
+* spherical cap: all cases in *bhaga_03_l16*
+* stable skirted: all cases in *bhaga_04_l16*
+
 ## How to reference
 
 This repository accompanies the following thesis, which will be published by spring 2020:
