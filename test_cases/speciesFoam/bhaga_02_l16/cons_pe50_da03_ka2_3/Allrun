@@ -1,0 +1,17 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/RunFunctions    # run functions
+
+./Allclean
+# copy mesh
+cp -r ../refinement_3/constant/polyMesh/ constant/
+# copy flux field
+latestTime=$(foamListTimes -latestTime -case ../hydro_steady_3/)
+cp -r ../hydro_steady_3/$latestTime/phi 0/phi
+# run solver
+app=/home/bin/speciesFoam
+runApplication $app
+# post processing
+touch post.foam
+
+#------------------------------------------------------------------------------

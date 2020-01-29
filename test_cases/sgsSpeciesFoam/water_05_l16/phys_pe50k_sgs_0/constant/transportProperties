@@ -1,0 +1,23 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1812                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+transportModel  Newtonian;
+
+nu              4.19661652E-3; // kinematic liquid viscosity
+// Pe=5x10^4; Re=658.5; Sc=Pe/Re=75.93; DA = nu/Sc
+DA              DA [0 2 -1 0 0 0 0] 5.5269544580534695e-05;
+A_model A_model_phys.pt;
+// ************************************************************************* //

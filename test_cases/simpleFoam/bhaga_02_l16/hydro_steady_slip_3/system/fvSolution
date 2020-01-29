@@ -44,7 +44,7 @@ SIMPLE
 
     residualControl
     {
-        p               1e-5;
+        p               1e-4;
         U               1e-4;
     }
 
@@ -54,7 +54,7 @@ relaxationFactors
 {
     equations
     {
-        U               0.7;
+        U               0.5;
     }
     fields
     {

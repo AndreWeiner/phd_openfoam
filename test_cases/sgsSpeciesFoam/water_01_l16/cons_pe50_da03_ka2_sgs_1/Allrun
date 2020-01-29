@@ -1,0 +1,24 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/RunFunctions    # run functions
+
+./Allclean
+# copy mesh
+cp -r ../refinement_1/constant/polyMesh/ constant/
+# copy flux field
+latestTime=$(foamListTimes -latestTime -case ../hydro_steady_1/)
+cp -r ../hydro_steady_1/$latestTime/phi 0/phi
+# create link to SGS model(s)
+ln -s /home/test_cases/pyTorchModels/A_model_cons.pt A_model_cons.pt
+ln -s /home/test_cases/pyTorchModels/P_model_cons.pt P_model_cons.pt
+ln -s /home/test_cases/pyTorchModels/B_model_cons.pt B_model_cons.pt
+ln -s /home/test_cases/pyTorchModels/S_model_cons.pt S_model_cons.pt
+ln -s /home/test_cases/pyTorchModels/rAB_model_cons.pt rAB_model_cons.pt
+ln -s /home/test_cases/pyTorchModels/rAP_model_cons.pt rAP_model_cons.pt
+# run solver
+app=/home/bin/sgsSpeciesFoam
+runApplication $app
+# post processing
+touch post.foam
+
+#------------------------------------------------------------------------------
