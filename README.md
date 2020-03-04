@@ -4,6 +4,8 @@ This repository contains [OpenFOAM](https://openfoam.com/) test cases, boundary 
 
 > Modeling and simulation of convection-dominated species transfer at rising bubbles
 
+This project was funded by the German Reseach Foundation (DFG) within the priority program [SPP1740 Reactive Bubbly Flows](http://www.dfg-spp1740.de/) under the grand *BO 1879/13-2*. The work was supervised by [Prof. Dr. rer. nat. Dieter Bothe](mailto:bothe@mma.tu-darmstadt.de) and conducted at the [Institute for Mathematical Modeling and Analysis](https://www.mma.tu-darmstadt.de/index/index.en.jsp) at the Technical University of Darmstadt.
+
 ## Dependencies
 
 All boundary conditions, utilities, and solvers are compiled using a special Docker image containing:
@@ -91,7 +93,7 @@ cd test_case
 ./Allrun
 ```
 
-Note that there are dependencies between the various test cases. For example, running a species transport simulation with *speciesFoam* requires a mesh and a velocity field. So the order to execute the provided simulation setting would be *meshing*, *flow solution*, *species transport*. Check out the *Allrun* scripts for more information.
+Note that there are dependencies between the various test cases. For example, running a species transport simulation with *speciesFoam* requires a mesh and a velocity field. So the order to execute the provided simulation settings would be *meshing*, *flow solution*, *species transport*. Check out the *Allrun* scripts for more information.
 
 The naming convention for the test cases in relation to the geometry files presented before is as follows:
 
@@ -104,16 +106,15 @@ The naming convention for the test cases in relation to the geometry files prese
 
 ## How to reference
 
-This repository accompanies the following thesis, which will be published by spring 2020:
+This repository accompanies the following thesis:
 ```
-@electronic{weiner2020,
-  address = {Darmstadt},
-  author = {Weiner, Andre},
-  hdsurl = {xxx},
-  keywords = {xxx},
-  title = {Modeling and simulation of convection-dominated species transfer at rising bubbles},
-  uniqueid = {xxx},
-  url = {xxx},
-  year = 2020
+@phdthesis{tuprints11405,
+            year = {2020},
+         address = {Darmstadt},
+          school = {Technical University of Darmstadt, Mathematical Modeling and Analysis},
+          author = {Andre Weiner},
+           title = {Modeling and simulation of convection-dominated species transfer at rising bubbles},
+           month = {February},
+            url = {http://tuprints.ulb.tu-darmstadt.de/11405/}
 }
 ```
