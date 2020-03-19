@@ -104,6 +104,8 @@ The naming convention for the test cases in relation to the geometry files prese
 * spherical cap: all cases in *bhaga_03_l16*
 * stable skirted: all cases in *bhaga_04_l16*
 
+The numbers in the names of the test cases have no particular meaning. The first double digit number is simply a running index. For example, bhaga_01_* was originally among the test cases, but violated the assumption of symmetry around the rise direction. The last number indicates the maximum refinement in the two-phase Basilisk simulations. All the geometry files used here stem from simulations with a refinement level of 16. The value 16 has no absolute meaning but is just relative to the initial grid. Refer to section 3.1 and 6 in my [thesis](https://tuprints.ulb.tu-darmstadt.de/cgi/users/home?screen=EPrint%3A%3AView&eprintid=11405) for more information.
+
 ## How to reference
 
 This repository accompanies the following thesis:

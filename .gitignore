@@ -5,3 +5,4 @@ boundary_conditions/pyTorchCppTest/build
 test_cases/run
 bin
 *.so
+.bash_history
