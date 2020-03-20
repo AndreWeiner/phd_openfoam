@@ -106,6 +106,30 @@ The naming convention for the test cases in relation to the geometry files prese
 
 The numbers in the names of the test cases have no particular meaning. The first double digit number is simply a running index. For example, bhaga_01_* was originally among the test cases, but violated the assumption of symmetry around the rise direction. The last number indicates the maximum refinement in the two-phase Basilisk simulations. All the geometry files used here stem from simulations with a refinement level of 16. The value 16 has no absolute meaning but is just relative to the initial grid. Refer to section 3.1 and 6 in my [thesis](https://tuprints.ulb.tu-darmstadt.de/cgi/users/home?screen=EPrint%3A%3AView&eprintid=11405) for more information.
 
+Let's say we wanted to simulate physisorption from a d_eq=1.8mm bubble rising in water (case *water_05_l16*). To perform this species transport simulation, we need a mesh, a flow field (flux field), and the case computing the species transport of a single species (say A). Before starting the simulations, solvers, utilities, and boundary conditions have to be compiled. Then, executing the following commands creates and runs the simulation outlined before:
+
+```
+# start container
+./startContainer
+# now we are operating from within the container
+source /opt/OpenFOAM/OpenFOAM-v1906/etc/bashrc
+cd test_cases
+mkdir -p run
+cd run
+# copy the case files for meshing, flow dynamics, and species transport
+# we will perform simulations on the coarsest refinement level (0)
+cp -r ../snappyHexMesh/water_05_l16/refinement_0/ .
+cp -r ../simpleFoam/water_05_l16/hydro_steady_0/ .
+cp -r ../speciesFoam/water_05_l16/phys_pe50k_0/ .
+./refinement_0/Allrun
+./hydro_steady/Allrun
+./phys_pe50k_0/Allrun
+# optional: extract local and global Sherwood number
+cd phys_pe50k_0
+/home/bin/localReactiveData &> log.localReactiveData
+```
+The flow dynamics simulations on finer meshes mostly use results from the previous refinement level to initialize the flow field. For example, executing *hydro_steady_1* requires the execution if *refinement_0*, *refinement_1*, and *hydro_steady_0*. To avoid this behavior, simply uncomment the field mapping in the *Allrun* script.
+
 ## How to reference
 
 This repository accompanies the following thesis:
