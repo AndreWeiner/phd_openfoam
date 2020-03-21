@@ -130,6 +130,25 @@ cd phys_pe50k_0
 ```
 The flow dynamics simulations on finer meshes mostly use results from the previous refinement level to initialize the flow field. For example, executing *hydro_steady_1* requires the execution if *refinement_0*, *refinement_1*, and *hydro_steady_0*. To avoid this behavior, simply uncomment the field mapping in the *Allrun* script.
 
+## How is this repository related to my thesis
+
+The OpenFOAM-related test cases in this repository have direct dependencies to the [Jupyter-repository](https://github.com/AndreWeiner/phd_notebooks) and indirect dependencies (via the Jupyter repository) to the [Basilisk repository](https://github.com/AndreWeiner/phd_basilisk).
+
+### Data required by this repository
+
+- STL files to create the single phase meshes for various shapes
+- PyTorch-based velocity boundary condition at the bubble surface (boundary)
+- PyTorch-based subgrid-scale models to perform simulations with *sgsSpeciesFoam*
+
+### Data provided by this repository
+
+All of the test cases in *simpleFoam*, *speciesFoam*, and *sgsSpeciesFoam* contribute to the results presented in chapter 6 of my thesis. Sometimes it's a picture of an unstructured mesh, a velocity field, or a concentration field, and sometimes it's a single number, e.g., the global Sherwood number. The following list provides more details:
+
+- the single-phase velocity fields visualized in figures 64 to 68 of chapter 6 were extracted from simulation results on the finest meshes (*refinement_3*) using Paraview as described in [this notebook](https://github.com/AndreWeiner/phd_notebooks/blob/master/notebooks/basilisk_2D_velocity_field.ipynb); the resulting CSV files were then copied to the Jupyter repository
+- the concentration fields in figures 69 to 78 were created directly in Paraview and show the results obtained on the finest meshes
+- the local and global Sherwood numbers in sections 6.6 and 6.7 were extracted from the simulations using the *localReactiveData* utility; the utility saves local Sherwood numbers in each time folder and the global Sherwood number in the top-level folder of the simulation; the resulting CSV files were copied to the Jupyter-repository and then evaluated and visualized
+- the test cases in *./test_cases/data_generation/* were used to generate the training data for the data-driven subgrid-scale models
+
 ## How to reference
 
 This repository accompanies the following thesis:
