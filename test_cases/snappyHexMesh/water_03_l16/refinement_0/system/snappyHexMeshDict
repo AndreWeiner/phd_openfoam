@@ -220,7 +220,7 @@ addLayersControls
     {
         bubble
         {
-            nSurfaceLayers 4;
+            nSurfaceLayers 2;
         }
         outerDomain
         {
@@ -235,7 +235,7 @@ addLayersControls
     // is the thickness of the layer furthest away from the wall.
     // Relative to undistorted size of cell outside layer.
     // See relativeSizes parameter.
-    finalLayerThickness 0.5;
+    finalLayerThickness 0.9;
 
     // Minimum thickness of cell layer. If for any reason layer
     // cannot be above minThickness do not add layer.
